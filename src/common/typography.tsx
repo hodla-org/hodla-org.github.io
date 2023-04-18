@@ -1,5 +1,11 @@
 import styled from "styled-components";
-import { headline1, headline2 } from "@/common/tokens";
+import {
+  headline1,
+  headline2,
+  primary,
+  secondary,
+  textS,
+} from "@/common/tokens";
 
 export const Headline1 = styled.h1`
   margin: 2rem 0;
@@ -8,4 +14,13 @@ export const Headline1 = styled.h1`
 
 export const Headline2 = styled.h1`
   ${headline2}
+`;
+
+export const Text = styled.span`
+  ${textS};
+  color: ${primary};
+`;
+
+export const SecondaryText = styled(Text)`
+  color: ${secondary};
 `;

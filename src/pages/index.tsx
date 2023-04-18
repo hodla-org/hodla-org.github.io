@@ -2,8 +2,11 @@ import styled from "styled-components";
 import { Button } from "@/common/Button";
 import { Icon } from "@/common/Icon/Icon";
 import { Headline1 } from "@/common/typography";
-import { bgLight } from "@/common/tokens";
-import { CoinView } from "@/components/CoinView";
+import { CoinView } from "@/components/CoinView/CoinView";
+import { CoinViewSkeleton } from "@/components/CoinView/CoinViewSkeleton";
+import { useStore } from "@/store/StoreProvider";
+import { coinsActions } from "@/store/coinsStore";
+import { useOnMount } from "@/hooks/useOnMount";
 
 const StyledButton = styled(Button)`
   & + & {
@@ -18,15 +21,13 @@ const CoinsContainer = styled.div`
   margin-top: 2.5rem;
 `;
 
-const COIN_PROPS: React.ComponentProps<typeof CoinView> = {
-  name: "Etherium",
-  nameAbbr: "ETH",
-  capitalization: 28536235550,
-  reward: 0.0409,
-  icon: "icons/etherium.svg",
-};
-
 export default function Home() {
+  const [{ coinsStore }, dispatch] = useStore();
+
+  useOnMount(() => {
+    dispatch(coinsActions.getCoins());
+  });
+
   return (
     <>
       <Headline1>Available chains</Headline1>
@@ -39,13 +40,13 @@ export default function Home() {
       </StyledButton>
       <StyledButton view="secondary" rounded iconLeft={<Icon type="gift" />} />
       <CoinsContainer>
-        <CoinView {...COIN_PROPS} />
-        <CoinView {...COIN_PROPS} />
-        <CoinView {...COIN_PROPS} />
-        <CoinView {...COIN_PROPS} />
-        <CoinView {...COIN_PROPS} />
-        <CoinView {...COIN_PROPS} />
-        <CoinView {...COIN_PROPS} />
+        {coinsStore.isCoinsLoading
+          ? new Array(4)
+              .fill(null)
+              .map((_, index) => <CoinViewSkeleton key={index} />)
+          : coinsStore.coins.map((coin) => {
+              return <CoinView {...coin} key={coin.id} />;
+            })}
       </CoinsContainer>
     </>
   );
